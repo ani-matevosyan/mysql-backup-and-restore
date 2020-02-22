@@ -1,0 +1,47 @@
+#Backup all databases
+#let's suppose your password is 111111 and user is the root, you can use this command 
+mysqldump -u root -p111111 --all-databases > /var/mysql_backups/all_databases.sql
+#If you want backup and compress run this
+mysqldump -u root -p111111 --all-databases | gzip -c > /var/mysql_backups/all_databases.sql.gz
+
+#Backup with cron job automatically for 7 days, 
+
+sudo crontab -e
+#add this command
+00 01 * * * mysqldump -u root -p111111 --all-databases | gzip -c > /var/mysql_backups/all_databases.`date +\%a`.sql.gz
+#or same command without password like this
+00 01 * * * mysqldump -u root --all-databases | gzip -c > /var/mysql_backups/all_databases.`date +\%a`.sql.gz
+#exit the editor
+
+
+#Restore all databases (or for server change)
+
+#First restore the main database 
+#CREATE DATABASE my_main_database_name;
+
+#then use this command for creating the other databases
+
+for DB_name in $(mysql -u root -p1111111 -e 'use my_main_database_name; select db_name from companies;' -s --skip-column-names); do    
+	mysql -u root -p111111 -e "CREATE DATABASE ${DB_name} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+done
+
+#After it can be used this command for restoring the databases
+for DB_item in $(mysql -u root -p111111 -e 'use my_main_database_name; select db_name from companies;' -s --skip-column-names); do    
+	mysql --one-database $DB_name < all_databases.sql
+done
+#If in the server are existing databases I recomend to use the sed command for security reason.
+sed -n '/^-- Current Database: `my_db_name`/,/^-- Current Database: `/p' all_databases.sql > my_db_name.sql
+# or with files some location
+sed -n '/^-- Current Database: `agency_u270`/,/^-- Current Database: `/p' /home/developer/Desktop/server-data/mysql_backups/all_databases.Sun.sql > /home/developer/Desktop/server-data/mysql_backups/agency_u270.sql
+#now we will have a one database file from all databases and will be able to inport it by for loop.
+
+#That's all, have a great day!
+
+
+
+#Helping links 
+#https://devanswers.co/backup-mysql-databases-linux-command-line/
+#https://devanswers.co/how-to-automatically-backup-web-server-doc-root-tar-cron/
+#https://linuxize.com/post/how-to-back-up-and-restore-mysql-databases-with-mysqldump/
+#https://www.configserverfirewall.com/mysqladmin/restore-one-database-all-database-dump/
+
