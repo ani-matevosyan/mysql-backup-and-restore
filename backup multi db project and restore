@@ -1,6 +1,6 @@
 #Backup all databases
 #let's suppose your password is 111111 and user is the root, you can use this command 
-`mysqldump -u root -p111111 --all-databases > /var/mysql_backups/all_databases.sql`
+mysqldump -u root -p111111 --all-databases > /var/mysql_backups/all_databases.sql
 #If you want backup and compress run this
 mysqldump -u root -p111111 --all-databases | gzip -c > /var/mysql_backups/all_databases.sql.gz
 
