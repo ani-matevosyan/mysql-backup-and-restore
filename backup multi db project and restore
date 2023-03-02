@@ -33,7 +33,7 @@ done
 sed -n '/^-- Current Database: `my_db_name`/,/^-- Current Database: `/p' all_databases.sql > my_db_name.sql
 # or with files some location
 sed -n '/^-- Current Database: `agency_u270`/,/^-- Current Database: `/p' /home/developer/Desktop/server-data/mysql_backups/all_databases.Sun.sql > /home/developer/Desktop/server-data/mysql_backups/agency_u270.sql
-#now we will have a one database file from all databases and will be able to inport it by for loop.
+#now we will have one database file from all databases and will be able to import it by for loop.
 
 #That's all, have a great day!
 
